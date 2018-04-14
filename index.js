@@ -14,142 +14,21 @@ const token = '467552538:AAHLmG2WapIlrA-MRAYHl2tdGY-cJFtM39c';
 
 const bot = new TelegramBot(token, {polling: true});
 
-bot.on('callback_query', callbackQuery => {
-    bot.answerCallbackQuery(callbackQuery.id, {text: '...'})
-    const data = JSON.parse(callbackQuery.data);
-    const chatId = callbackQuery.from.id
-
-    switch (data.do) {
-        case 'showTrain':
-            getNextSegment(data.f, data.t, +new Date())
-                .then(segment => {
-                    const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
-                    bot.sendMessage(chatId, getTrainInfoBySegment(segment), { reply_markup: { inline_keyboard: inline_keyboard } });
-                });
-            break;
-        case 'prev':
-            getPrevSegment(data.f, data.t, data.d)
-                .then(segment => {
-                const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));//дата относительно которой создаются кнопки
-                const text = getTrainInfoBySegment(segment);
-                const options = {
-                    chat_id: chatId,
-                    message_id: callbackQuery.message.message_id,
-                    reply_markup: { inline_keyboard: inline_keyboard }
-                };
-                bot.editMessageText(text, options);
-            });
-            break;
-
-
-
-            // getPrevSegment(data.f, data.t).then(segments => {
-            //     const segment = getPrevTrain(segments, data.d);
-            //     const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
-            //     const text = getTrainInfoBySegment(segment);
-            //     const options = {
-            //         chat_id: chatId,
-            //         message_id: callbackQuery.message.message_id,
-            //         reply_markup: { inline_keyboard: inline_keyboard }
-            //     }
-            //     bot.editMessageText(text, options);
-            // });
-            // break;
-        case 'next':
-            getNextSegment(data.f, data.t, data.d)
-                .then(segment => {
-                    const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
-                    const text = getTrainInfoBySegment(segment);
-                    const options = {
-                        chat_id: chatId,
-                        message_id: callbackQuery.message.message_id,
-                        reply_markup: { inline_keyboard: inline_keyboard }
-                    };
-                    bot.editMessageText(text, options);
-                });
-            break;
-
-            // getSegments(data.f, data.t).then(segments => {
-            //     const segment = getNextTrain(segments, data.d);
-            //     const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
-            //     const text = getTrainInfoBySegment(segment);
-            //     const options = {
-            //         chat_id: chatId,
-            //         message_id: callbackQuery.message.message_id,
-            //         reply_markup: { inline_keyboard: inline_keyboard }
-            //     }
-            //     bot.editMessageText(text, options);
-            // });
-            // break;
-
-
-    }
-})
-
-
-bot.on("message", (msg) =>{
+bot.on("message", (msg) => {
     const chatId = msg.chat.id;
-    const stations= {
+    const stations = {
         StZheldor: 's9601675',
         StNovogireevo: 's9601737',
         StKurskya: 's2000001',
         StReutov: 's9600796'
     }
 
-    if(/\/keyboard/.test(msg.text)) {
-        const callbackData = [
-            {
-                do: 'showTrain',
-                f: stations.StZheldor,
-                t: stations.StNovogireevo
-            },{
-                do: 'showTrain',
-                f: stations.StNovogireevo,
-                t: stations.StZheldor
-            },{
-                do: 'showTrain',
-                f: stations.StZheldor,
-                t: stations.StKurskya
-            },{
-                do: 'showTrain',
-                f: stations.StKurskya,
-                t: stations.StZheldor
-            }
-        ]
-        const params = {
-            reply_markup: {
-                inline_keyboard: [
-                    [{
-                        text: 'Жлдр => Новогир',
-                        callback_data: JSON.stringify(callbackData[0])
-                    },{
-                        text: 'Обратно',
-                        callback_data: JSON.stringify(callbackData[1])
-                    }],
-                    [{
-                        text: 'Жлдр => Курская',
-                        callback_data: JSON.stringify(callbackData[2])
-                    },{
-                        text: 'Обратно',
-                        callback_data: JSON.stringify(callbackData[3])
-                    }]
-                ]
-            }
-        };
-        bot.sendMessage(chatId, 'Клавиатура активирована!', params);
-        // return {
-        //     inline_keyboard: [
-        //         getStationButtons()
-        //     ]
-        // }
-    }
-
     function getDate() {
         var TodayDate = new Date();
-        return TodayDate.getFullYear() + '-' + (TodayDate.getMonth()+1) + '-' + TodayDate.getDate();
+        return TodayDate.getFullYear() + '-' + (TodayDate.getMonth() + 1) + '-' + TodayDate.getDate();
     }
 
-    if(/\/request/.test(msg.text)) {
+    if (/\/request/.test(msg.text)) {
         return requestSend();
     }
     //
@@ -182,14 +61,14 @@ bot.on("message", (msg) =>{
     //     }) //works w/ real time
     // }
 
-    if(/date/.test(msg.text)) {
+    if (/date/.test(msg.text)) {
         var today = getDate();
         bot.sendMessage(
-            chatId,today);
+            chatId, today);
         return
     }
     // убрать лол
-    bot.sendMessage(chatId,'lol');
+    bot.sendMessage(chatId, 'lol');
 
     // function getStationButtons() {
     //     let buttons = []
@@ -200,6 +79,138 @@ bot.on("message", (msg) =>{
     //     return buttons
     // }
 
+//}) bot on
+
+    if (/\/keyboard/.test(msg.text)) {
+        const callbackData = [
+            {
+                do: 'showTrain',
+                f: stations.StZheldor,
+                t: stations.StNovogireevo
+            }, {
+                do: 'showTrain',
+                f: stations.StNovogireevo,
+                t: stations.StZheldor
+            }, {
+                do: 'showTrain',
+                f: stations.StZheldor,
+                t: stations.StKurskya
+            }, {
+                do: 'showTrain',
+                f: stations.StKurskya,
+                t: stations.StZheldor
+            }
+        ]
+        const params = {
+            reply_markup: {
+                inline_keyboard: [
+                    [{
+                        text: 'Жлдр => Новогир',
+                        callback_data: JSON.stringify(callbackData[0])
+                    }, {
+                        text: 'Обратно',
+                        callback_data: JSON.stringify(callbackData[1])
+                    }],
+                    [{
+                        text: 'Жлдр => Курская',
+                        callback_data: JSON.stringify(callbackData[2])
+                    }, {
+                        text: 'Обратно',
+                        callback_data: JSON.stringify(callbackData[3])
+                    }]
+                ]
+            }
+        };
+        bot.sendMessage(chatId, 'Выбери направление', params);
+        // return {
+        //     inline_keyboard: [
+        //         getStationButtons()
+        //     ]
+        // }
+
+
+        bot.on('callback_query', callbackQuery => {
+            bot.answerCallbackQuery(callbackQuery.id, {text: '...'})
+            const data = JSON.parse(callbackQuery.data);
+            const chatId = callbackQuery.from.id
+
+            switch (data.do) {
+                case 'showTrain':
+                    getNextSegment(data.f, data.t, +new Date())
+                        .then(segment => {
+                            const inline_keyboard = getInlineKeyboardForTrain({
+                                from: data.f,
+                                to: data.t
+                            }, +new Date(segment.departure));
+                             const text = getTrainInfoBySegment(segment);
+                             const options = {
+                                 chat_id: chatId,
+                                 message_id: callbackQuery.message.message_id,
+                                 reply_markup: {inline_keyboard: inline_keyboard}
+                             };
+                            bot.editMessageText(text, options);
+                        });
+                    break;
+                case 'prev':
+                    getPrevSegment(data.f, data.t, data.d)
+                        .then(segment => {
+                            const inline_keyboard = getInlineKeyboardForTrain({
+                                from: data.f,
+                                to: data.t
+                            }, +new Date(segment.departure));//дата относительно которой создаются кнопки
+                            const text = getTrainInfoBySegment(segment);
+                            const options ={
+                                chat_id: chatId,
+                                message_id: callbackQuery.message.message_id,
+                                reply_markup: {inline_keyboard: inline_keyboard}
+                            };
+                            bot.editMessageText(text, options);
+                        });
+                    break;
+                // getPrevSegment(data.f, data.t).then(segments => {
+                //     const segment = getPrevTrain(segments, data.d);
+                //     const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
+                //     const text = getTrainInfoBySegment(segment);
+                //     const options = {
+                //         chat_id: chatId,
+                //         message_id: callbackQuery.message.message_id,
+                //         reply_markup: { inline_keyboard: inline_keyboard }
+                //     }
+                //     bot.editMessageText(text, options);
+                // });
+                // break;
+                case 'next':
+                    getNextSegment(data.f, data.t, data.d)
+                        .then(segment => {
+                            const inline_keyboard = getInlineKeyboardForTrain({
+                                from: data.f,
+                                to: data.t
+                            }, +new Date(segment.departure));
+                            const text = getTrainInfoBySegment(segment);
+                            const options = {
+                                chat_id: chatId,
+                                message_id: callbackQuery.message.message_id,
+                                reply_markup: {inline_keyboard: inline_keyboard}
+                            };
+                            bot.editMessageText(text, options);
+                        });
+                    break;
+
+                // getSegments(data.f, data.t).then(segments => {
+                //     const segment = getNextTrain(segments, data.d);
+                //     const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
+                //     const text = getTrainInfoBySegment(segment);
+                //     const options = {
+                //         chat_id: chatId,
+                //         message_id: callbackQuery.message.message_id,
+                //         reply_markup: { inline_keyboard: inline_keyboard }
+                //     }
+                //     bot.editMessageText(text, options);
+                // });
+                // break;
+            }
+        })
+    }//end of if keyboard
 })
 
 
