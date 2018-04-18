@@ -10,6 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "node-telegram-bot-api": "^0.29.0"
+    "moment": "^2.22.1",
+    "node-telegram-bot-api": "^0.29.0",
+    "request": "^2.85.0"
+  },
+  "devDependencies": {
+    "moment": "^2.22.1",
+    "momentjs": "^2.0.0"
   }
 }

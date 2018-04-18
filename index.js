@@ -1,4 +1,3 @@
-const request = require('request');
 const TelegramBot = require('node-telegram-bot-api');
 const getNextSegment = require('./getNextSegment');
 const getPrevSegment = require('./getPrevSegment');
@@ -23,8 +22,6 @@ bot.setWebHook(`${url}/bot${token}`);
 
 bot.on("message", (msg) => {
     const chatId = msg.chat.id;
-
-
 
     if (/\/request/.test(msg.text)) {
         return requestSend();
