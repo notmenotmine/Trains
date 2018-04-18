@@ -4,7 +4,7 @@ const declOfNum = require('./declOfNum');
 module.exports = (segment) => {
     var train_title = JSON.stringify(segment.thread.short_title);
     train_title = train_title.substring(1, train_title.lastIndexOf('"'));
-    const departure = moment(segment.departure).format('h:mm');
+    const departure = moment(segment.departure).format('hh:mm');
 
     var diffToReturn;
     var curTime = moment();
@@ -29,7 +29,7 @@ module.exports = (segment) => {
 
 
 
-    const arrival = moment(segment.arrival).format('h:mm');
+    const arrival = moment(segment.arrival).format('hh:mm');
     // return train_title + "\nОтправление: " + departure + "\nПрибытие: " + arrival + "\n" + diffToReturn;
     return `<b>${train_title}</b> \nОтправление: ${departure} \nПрибытие: ${arrival} \n\n${diffToReturn}`;
 }
