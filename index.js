@@ -27,6 +27,10 @@ bot.on("message", (msg) => {
         return requestSend();
     }
 
+    if (/\/time/.test(msg.text)) {
+        bot.sendMessage(chatId, moment().format())
+    }
+
     if (/date/.test(msg.text)) {
          //var today = getDate();
         // bot.sendMessage(
