@@ -14,7 +14,7 @@ module.exports = (segment) => {
         m: depTime.diff(curTime, 'minutes') % 60
     };
 
-        if (difference <= 0)
+        if (depTime.diff(curTime) <= 0)
             diffToReturn = "Поезд ушёл";
         else {
             diffToReturn = 'Через ';
