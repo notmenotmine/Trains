@@ -11,6 +11,9 @@ module.exports = (stations, timestamp) => {
             d: timestamp,
             f: stations.from,
             t: stations.to
+        },
+        back: {
+            do: 'back'
         }
     }
 
@@ -21,6 +24,12 @@ module.exports = (stations, timestamp) => {
         },{
             text: '⏭',
             callback_data: JSON.stringify(buttons.next)
-        }]
+        }
+        ],[
+            {
+                text: 'К выбору направления',
+                callback_data: JSON.stringify(buttons.back)
+            }
+        ]
     ]
 }
