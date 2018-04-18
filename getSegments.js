@@ -3,7 +3,7 @@ const getTodayDate = require('./getTodayDate')
 
 module.exports = (from, to, date) => {
     const url = 'https://api.rasp.yandex.net/v3.0/search/?apikey=3402ebf0-db6a-43ca-a3bd-1ab0cf7d6fac&' +
-        'format=json&from=' + from + '&to=' + to + '&lang=ru_RU&limit=200&date=' + date;
+        'format=json&from=' + from + '&to=' + to + '&lang=ru_RU&limit=200&date=' + date + '&result_timezone=GMT';
     console.log(url);
     return new Promise((resolve, reject) => {// объявлен промис
         request(url, (error, response, body) => { // отправляется запрос и вешаются колбэки
