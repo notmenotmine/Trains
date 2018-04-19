@@ -8,7 +8,7 @@ const moment = require('moment');
 
 const token = '467552538:AAHLmG2WapIlrA-MRAYHl2tdGY-cJFtM39c';
 
-// const bot = new TelegramBot(token, {polling: true});
+//const bot = new TelegramBot(token, {polling: true}); //local
 const options = {
     webHook: {
         port: process.env.PORT
@@ -17,9 +17,9 @@ const options = {
 
 const url = process.env.APP_URL || 'https://yatrainstimetable.herokuapp.com:443';
 // const bot = new TelegramBot(token, {polling: true});
-const bot = new TelegramBot(token, options);
+const bot = new TelegramBot(token, options); //heroku
 
-bot.setWebHook(`${url}/bot${token}`);
+bot.setWebHook(`${url}/bot${token}`); //heroku
 
 bot.on("message", (msg) => {
     const chatId = msg.chat.id;

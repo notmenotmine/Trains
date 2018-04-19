@@ -25,10 +25,6 @@ module.exports = (segment) => {
                 diffToReturn += `${difference.m} ${declOfNum(difference.m, ['минуту', 'минуты', 'минут'])}`
             }
         }
-
-
-
-
     const arrival = moment(segment.arrival).format('HH:mm');
     // return train_title + "\nОтправление: " + departure + "\nПрибытие: " + arrival + "\n" + diffToReturn;
     return `<b>${train_title}</b> \nОтправление: ${departure} \nПрибытие: ${arrival} \n\n${diffToReturn}`;
