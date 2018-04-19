@@ -6,11 +6,8 @@ const getInlineKeyboardForTrain = require('./getInlineKeyboardForTrain');
 const getInlineWithTrains = require('./getInlineWithTrains');
 const moment = require('moment');
 
-//const token = '467552538:AAHLmG2WapIlrA-MRAYHl2tdGY-cJFtM39c';
 const token = '552915665:AAGV5520Y6yIaw4szf74kOEPc3j-mKbTaYs';
-
-
-const bot = new TelegramBot(token, {polling: true}); //local
+//const bot = new TelegramBot(token, {polling: true}); //local
 const options = {
     webHook: {
         port: process.env.PORT
@@ -19,9 +16,9 @@ const options = {
 
 const url = process.env.APP_URL || 'https://yatrainstimetable.herokuapp.com:443';
 // const bot = new TelegramBot(token, {polling: true});
-//const bot = new TelegramBot(token, options); //heroku
+const bot = new TelegramBot(token, options); //heroku
 
-//bot.setWebHook(`${url}/bot${token}`); //heroku
+bot.setWebHook(`${url}/bot${token}`); //heroku
 
 bot.on("message", (msg) => {
     const chatId = msg.chat.id;
@@ -38,12 +35,14 @@ bot.on("message", (msg) => {
                 chatId, `Дата: ${today}`);
             return;
     }
-    //if((msg.text  !== '/keyboard' || msg.sticker))
-    //bot.sendMessage(chatId, 'lol');
-    if (/\/help/.test(msg.text)) {
-        bot.sendMessage(chatId, `помощь`);
+    if(msg.text  !== '/keyboard' && msg.text  !== '/start' && msg.text !== '/help' && msg.text !== '/date' && msg.text !== '/time') {
+        bot.sendMessage(chatId, `Список команд для работы с ботом:\n/keyboard - показать список направлений\n/help - справка\n<b>Любые текстовые сообщения излишни.</b>`,
+            {parse_mode: 'html'}
+        );
     }
-
+    if (/\/help/.test(msg.text)) {
+        bot.sendMessage(chatId, `При отправке команды /keyboard появляется список маршрутов. После выбора нужного маршрута следует нажать на соответствующую кнопку и дождаться расписания. В появившемся окне помимо информации о электричке есть возможность получить информацию об ушедших поездах или о ещё не прибывших. Чтобы вернуться к выбору всех маршрутов нужно нажать на кнопку с соответствующим названием.`);
+    }
     if (/\/keyboard/.test(msg.text)) {
         const params = {
             reply_markup: {
