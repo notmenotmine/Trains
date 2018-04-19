@@ -6,9 +6,11 @@ const getInlineKeyboardForTrain = require('./getInlineKeyboardForTrain');
 const getInlineWithTrains = require('./getInlineWithTrains');
 const moment = require('moment');
 
-const token = '467552538:AAHLmG2WapIlrA-MRAYHl2tdGY-cJFtM39c';
+//const token = '467552538:AAHLmG2WapIlrA-MRAYHl2tdGY-cJFtM39c';
+const token = '552915665:AAGV5520Y6yIaw4szf74kOEPc3j-mKbTaYs';
 
-//const bot = new TelegramBot(token, {polling: true}); //local
+
+const bot = new TelegramBot(token, {polling: true}); //local
 const options = {
     webHook: {
         port: process.env.PORT
@@ -17,44 +19,30 @@ const options = {
 
 const url = process.env.APP_URL || 'https://yatrainstimetable.herokuapp.com:443';
 // const bot = new TelegramBot(token, {polling: true});
-const bot = new TelegramBot(token, options); //heroku
+//const bot = new TelegramBot(token, options); //heroku
 
-bot.setWebHook(`${url}/bot${token}`); //heroku
+//bot.setWebHook(`${url}/bot${token}`); //heroku
 
 bot.on("message", (msg) => {
     const chatId = msg.chat.id;
 
-    if (/\/request/.test(msg.text)) {
-        return requestSend();
+    if (/\/start/.test(msg.text)) {
+        bot.sendMessage(chatId, `Бот запущен! \nЧтобы получать расписание отправь боту команду /keyboard и в появившемся списке выбери нужный маршрут😉`);
     }
-
     if (/\/time/.test(msg.text)) {
         bot.sendMessage(chatId, moment().format())
     }
-
-    if (/date/.test(msg.text)) {
-         //var today = getDate();
-        // bot.sendMessage(
-        //     chatId, today);
-        // return
+    if (/\/date/.test(msg.text)) {
         var today = new Date();
-
-        var depDate = '"2018-04-17T11:24:00+03:00"';
-        depDate = depDate.substring(1,depDate.length-1);
-
-        var big = moment(today);
-        var small = moment(depDate);
-
-        bot.sendMessage(
-            chatId, depDate + "\n" + today + "\n" +   big.diff(small, 'minutes'));
-         return
+            bot.sendMessage(
+                chatId, `Дата: ${today}`);
+            return;
     }
-    // убрать лол
-    if((msg.text  !== '/keyboard' || msg.sticker))
-    bot.sendMessage(chatId, 'lol');
-
-
-//}) bot on
+    //if((msg.text  !== '/keyboard' || msg.sticker))
+    //bot.sendMessage(chatId, 'lol');
+    if (/\/help/.test(msg.text)) {
+        bot.sendMessage(chatId, `помощь`);
+    }
 
     if (/\/keyboard/.test(msg.text)) {
         const params = {
@@ -62,9 +50,9 @@ bot.on("message", (msg) => {
                 inline_keyboard: getInlineWithTrains()
             }
         };
-        bot.sendMessage(chatId, 'Выбери направление', params);
-    }//end of if keyboard
-})
+        bot.sendMessage(chatId, 'Выбери нужный маршрут:', params);
+    }
+});
 
 bot.on('callback_query', callbackQuery => {
     bot.answerCallbackQuery(callbackQuery.id, {text: '...'})
@@ -106,18 +94,6 @@ bot.on('callback_query', callbackQuery => {
                     bot.editMessageText(text, options);
                 });
             break;
-        // getPrevSegment(data.f, data.t).then(segments => {
-        //     const segment = getPrevTrain(segments, data.d);
-        //     const inline_keyboard = getInlineKeyboardForTrain({ from: data.f, to: data.t }, +new Date(segment.departure));
-        //     const text = getTrainInfoBySegment(segment);
-        //     const options = {
-        //         chat_id: chatId,
-        //         message_id: callbackQuery.message.message_id,
-        //         reply_markup: { inline_keyboard: inline_keyboard }
-        //     }
-        //     bot.editMessageText(text, options);
-        // });
-        // break;
         case 'next':
             getNextSegment(data.f, data.t, data.d)
                 .then(segment => {
@@ -155,13 +131,6 @@ bot.on('callback_query', callbackQuery => {
         //     }
         //     bot.editMessageText(text, options);
         // });
-        // break;
+        break;
     }
-})
-
-/*
-url in promise
-  // var url = 'https://api.rasp.yandex.net/v3.0/search/?apikey=3402ebf0-db6a-43ca-a3bd-1ab0cf7d6fac&format=json&from='+stations.StZheldor + '&to='+ stations.StNovogireevo +'&lang=ru_RU&page=1&date='+today;
-  //bot.sendMessage(chatId, url);
-  //xhr.open('GET', url, true);
-*/
+});
